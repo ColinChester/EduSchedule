@@ -6,32 +6,34 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class AvailabilityDBCRUD {
-    public static int addAvailability(int employeeId, Availability a) {
-        String availabilityAdd = "INSERT INTO availability (employee_id, day_of_week, start_time, end_time) VALUES (?, ?, ?, ?)";
-        int newId = 0;
-        try (var conn = DbConnection.getConnection()){
-            for (TimeRange tr : a.getTimeRanges()) {
-                var pstmt = conn.prepareStatement(availabilityAdd, Statement.RETURN_GENERATED_KEYS);
-                pstmt.setInt(1, employeeId);
-                pstmt.setString(2, a.getDay().toString());
-                pstmt.setString(3, tr.getStart().toString());
-                pstmt.setString(4, tr.getEnd().toString());
-                int rowsAffected = pstmt.executeUpdate();
-                if (rowsAffected > 0) {
-                    try (var newKeys = pstmt.getGeneratedKeys()){
-                        if (newKeys.next()) {
-                            newId = newKeys.getInt(1);
-                        }
-                    }
-                }
-            }
-            a.refreshAvailability(employeeId);
-        } catch (SQLException e) {
-            System.err.println("Connection error in addAvailability: " + e.getMessage());
-            e.printStackTrace();
-        }
-		return newId;
-    }
+	public static int addAvailabilityDb(int employeeId, Availability a) {
+	    String availabilityAdd = "INSERT INTO availability (employee_id, day_of_week, start_time, end_time) VALUES (?, ?, ?, ?)";
+	    int newId = 0;
+	    try (var conn = DbConnection.getConnection();
+	         var pstmt = conn.prepareStatement(availabilityAdd, Statement.RETURN_GENERATED_KEYS)) {
+	        for (TimeRange tr : a.getTimeRanges()) {
+	            pstmt.setInt(1, employeeId);
+	            pstmt.setString(2, a.getDay().toString());
+	            pstmt.setString(3, tr.getStart().toString());
+	            pstmt.setString(4, tr.getEnd().toString());
+	            int rows = pstmt.executeUpdate();
+	            if (rows > 0) {
+	                try (var keys = pstmt.getGeneratedKeys()) {
+	                    if (keys.next()) {
+	                        newId = keys.getInt(1);
+	                    }
+	                }
+	            }
+	        }
+	        a.refreshAvailability(employeeId);
+	    } catch (SQLException e) {
+	        System.err.println("Connection error in addAvailabilityDb: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	    return newId;
+	}
+
+
     
     public static void delAvailability(int availabilityId) {
         String availabilityDel = "DELETE FROM availability WHERE availability_id = ?";

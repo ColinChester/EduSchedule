@@ -7,33 +7,36 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 
 public class EmployeeDBCRUD {
-	public static void addEmployee(Employee employee) {
-        String employeeAdd = "INSERT INTO employees (first_name, last_name, school_id, email, phone_number, title) VALUES (?, ?, ?, ?, ?, ?)";
-        try (var conn = DbConnection.getConnection();
-             var pstmt = conn.prepareStatement(employeeAdd, Statement.RETURN_GENERATED_KEYS)) {
+	public static int addEmployeeDb(Employee employee) {
+	    String employeeAdd = 
+	      "INSERT INTO employees (first_name, last_name, school_id, email, phone_number, title) VALUES (?, ?, ?, ?, ?, ?)";
+	    int newId = 0;
+	    try (var conn = DbConnection.getConnection();
+	         var pstmt = conn.prepareStatement(employeeAdd, Statement.RETURN_GENERATED_KEYS)) {
+	        pstmt.setString(1, employee.getFName());
+	        pstmt.setString(2, employee.getLName());
+	        pstmt.setString(3, employee.getSchoolId());
+	        pstmt.setString(4, employee.getEmail());
+	        pstmt.setString(5, employee.getPhoneNum());
+	        pstmt.setString(6, employee.getTitle());
 
-            pstmt.setString(1, employee.getFName());
-            pstmt.setString(2, employee.getLName());
-            pstmt.setString(3, employee.getSchoolId());
-            pstmt.setString(4, employee.getEmail());
-            pstmt.setString(5, employee.getPhoneNum());
-            pstmt.setString(6, employee.getTitle());
-            
-            int rowsAffected = pstmt.executeUpdate();
-            if (rowsAffected > 0) {
-                try (ResultSet newKeys = pstmt.getGeneratedKeys()) {
-                    if (newKeys.next()) {
-                        int newId = newKeys.getInt(1);
-                        employee.setEmployeeId(newId);
-                    }
-                }
-            }
-            employee.employeeRefresh();
-        } catch (SQLException e) {
-            System.out.println("Connection error 1: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
+	        int rows = pstmt.executeUpdate();
+	        if (rows > 0) {
+	            try (ResultSet keys = pstmt.getGeneratedKeys()) {
+	                if (keys.next()) {
+	                    newId = keys.getInt(1);
+	                    employee.setEmployeeId(newId);
+	                }
+	            }
+	        }
+	        employee.employeeRefresh();
+	    } catch (SQLException e) {
+	        System.err.println("Connection error 1: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	    return newId;
+	}
+
 	
 	public static void delEmployee(Employee employee) { //https://www.sqlitetutorial.net/sqlite-java/delete/
 		String employeeDel = "DELETE FROM employees WHERE school_id = ?";

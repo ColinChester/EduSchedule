@@ -9,6 +9,7 @@ import java.sql.SQLException;
 public class Availability {
     private DayOfWeek day;
     private List<TimeRange> timeRanges = new ArrayList<>();
+    private int availabilityId;
     
     public Availability(String day) {
         this.day = DayOfWeek.valueOf(day);
@@ -42,6 +43,10 @@ public class Availability {
     
     public List<TimeRange> getTimeRanges() {
         return timeRanges;
+    }
+    
+    public void setEmployeeId(int newId) {
+    	this.availabilityId = newId;
     }
     
     @Override

@@ -11,7 +11,7 @@ public class DbConnection {
 	    public static Connection connect() { //Implementation reworked from https://www.sqlitetutorial.net/sqlite-java/sqlite-jdbc-driver/
 	    	Connection conn = null;
 	    	try {
-		        var url = DbConnection.class.getResource("/ScheduleInfo.sqlite");
+		        var url = DbConnection.class.getResource("/ScheduleData.sqlite");
 		        if (url == null) {
 		        	System.err.println("Could not find file.");
 		        	return conn;
