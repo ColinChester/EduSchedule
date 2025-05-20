@@ -8,6 +8,7 @@ import com.google.ortools.sat.CpSolver;
 import com.google.ortools.sat.CpSolverStatus;
 import com.google.ortools.sat.LinearExpr;
 import com.google.ortools.sat.BoolVar;
+import com.google.ortools.sat.IntVar;
 import main.appFiles.schedulingData.*;
 import java.time.LocalTime;
 import java.time.DayOfWeek;
@@ -66,6 +67,38 @@ public class ScheduleBuilder {
 		    // Convert the List<BoolVar> to an array for LinearExpr.sum()
 		    model.addEquality(LinearExpr.sum(slotVars.toArray(new BoolVar[0])), 1);
 		}
+		// 1. Create an IntVar that counts each employee's total assigned slots.
+				Map<Integer, IntVar> loadVars = new HashMap<>();
+				for (Employee e : employees) {
+				    BoolVar[] empSlots = assignments.get(e.getEmployeeId());
+				    IntVar load = model.newIntVar(0, numSlots, "load_emp_" + e.getEmployeeId());
+				    model.addEquality(load, LinearExpr.sum(empSlots));
+				    loadVars.put(e.getEmployeeId(), load);
+				}
+
+				// 2. Define vars for the maximum and minimum load.
+				IntVar maxLoad = model.newIntVar(0, numSlots, "maxLoad");
+				IntVar minLoad = model.newIntVar(0, numSlots, "minLoad");
+
+				// 3. Constrain them so maxLoad ≥ every load, and minLoad ≤ every load.
+				for (IntVar load : loadVars.values()) {
+				    model.addLessOrEqual(load, maxLoad);
+				    model.addGreaterOrEqual(load, minLoad);
+				}
+
+				// 4. Set the objective to minimize the difference (maxLoad – minLoad).
+				// This drives the solver to equalize assignments as much as possible.
+				model.minimize(LinearExpr.newBuilder()
+				    .addTerm(maxLoad,  1)
+				    .addTerm(minLoad, -1)
+				    .build());
+				
+				// Add constraint: each employee must work at least one slot.
+				for (Employee e : employees) {
+				    BoolVar[] empVars = assignments.get(e.getEmployeeId());
+				    // Sum(empVars) ≥ 1 ensures this employee is scheduled at least once.
+				    model.addGreaterOrEqual(LinearExpr.sum(empVars), 1);
+				}
 		
 		// Solve the model.
 		CpSolver solver = new CpSolver();

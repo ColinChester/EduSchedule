@@ -122,6 +122,34 @@ public class Employee {
         }
     }
     
+    public static Employee employeeRefresh(int id) {
+        Employee emp = null;
+    	String tableQuery = "SELECT employee_id, first_name, last_name, school_id, email, phone_number, title FROM employees WHERE employee_id = ?";
+        try (var conn = DbConnection.getConnection();
+             var pstmt = conn.prepareStatement(tableQuery)) {
+             pstmt.setInt(1, id);
+             try (var query = pstmt.executeQuery()) {
+                 if (query.next()) {
+                	 emp = new Employee(
+                     query.getInt("employee_id"),
+                     query.getString("first_name"),
+                     query.getString("last_name"),
+                     query.getString("school_id"),
+                     query.getString("email"),
+                     query.getString("phone_number"),
+                     query.getString("title"));
+                 } else {
+                     System.out.println("No record found for employee ID " + id);
+                     return null;
+                 }
+             }
+        } catch (SQLException e) {
+             System.err.println("Error refreshing employee: " + e.getMessage());
+             e.printStackTrace();
+        }
+        return emp;
+    }
+    
     @Override
     public String toString() {
     	return this.fName + " " + this.lName + " " + this.schoolId + " " + this.email + " " + this.phoneNum + " " + this.title + " " + this.employeeId + " " + this.availabilities;

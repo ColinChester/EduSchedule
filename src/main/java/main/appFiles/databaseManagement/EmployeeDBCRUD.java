@@ -38,20 +38,41 @@ public class EmployeeDBCRUD {
 	}
 
 	
-	public static void delEmployee(Employee employee) { //https://www.sqlitetutorial.net/sqlite-java/delete/
-		String employeeDel = "DELETE FROM employees WHERE school_id = ?";
+	public static boolean delEmployee(int id) { //https://www.sqlitetutorial.net/sqlite-java/delete/
+		String employeeDel = "DELETE FROM employees WHERE employee_id = ?";
+		String findAvailability = "SELECT EXISTS(SELECT 1 FROM availability WHERE employee_id = ?";
+		String availabilityDel = "DELETE FROM availability WHERE employee_id = ?";
+		int empRow = 0;
+		int avaRow = 0;
+		
 		try (Connection conn = DbConnection.getConnection()){
 			var pstmt = conn.prepareStatement(employeeDel);
-			pstmt.setString(1, employee.getSchoolId());
-			pstmt.executeUpdate();
-			System.out.println("User Successfully deleted");
+			pstmt.setInt(1, id);
+			empRow = pstmt.executeUpdate();
+			if (empRow > 0) {
+				System.out.println("User successfully deleted from employee table");
+			}
+			
+			pstmt = conn.prepareStatement(findAvailability);
+			pstmt.setInt(1,  id);
+			var result = pstmt.executeQuery();
+			result.next();
+			if (result.getInt(1) == 1) {
+				pstmt = conn.prepareStatement(availabilityDel);
+				pstmt.setInt(1,  id);
+				avaRow = pstmt.executeUpdate();
+				if (avaRow > 0) {
+					System.out.println("User successfully deleted from availability table");
+				}
+			}	
 		} catch (SQLException e) {
 			System.out.println("Connection error 2: " + e.getMessage());
 			e.getStackTrace();
 		}
+		return empRow > 0;
 	}
 	
-	public static void editEmployee(Employee updatedEmployee) {
+	public static boolean editEmployee(Employee updatedEmployee) {
 		String employeeUpd = "UPDATE employees SET"
 				+ " first_name = COALESCE(?, first_name),"
 				+ " last_name = COALESCE(?, last_name),"
@@ -73,6 +94,7 @@ public class EmployeeDBCRUD {
 			int changedRows = pstmt.executeUpdate();
 			if (changedRows > 0) {
 				System.out.println("Employee info updated");
+				return true;
 			}else {
 				System.out.println("Employee not found");
 			}
@@ -80,9 +102,10 @@ public class EmployeeDBCRUD {
 			System.out.println("Error updating user: " + e.getMessage());
 			e.printStackTrace();
 		}
+		return false;
 	}
 	
-	public static void getEmployee(int employeeId) {
+	public static void printEmployee(int employeeId) {
 		String tableQuery = "SELECT employee_id, first_name, last_name, school_id, email, phone_number, title FROM employees WHERE employee_id = ?";
 		try (var conn = DbConnection.getConnection()){
 			var pstmt = conn.prepareStatement(tableQuery);
@@ -105,5 +128,33 @@ public class EmployeeDBCRUD {
 			System.out.println("Connection Error 3: " + e.getMessage());
 			e.getStackTrace();
 		}
+	}
+	
+	public static Employee getEmployee(int employeeId) {
+		Employee emp = null;
+		String tableQuery = "SELECT employee_id, first_name, last_name, school_id, email, phone_number, title FROM employees WHERE employee_id = ?";
+		try (var conn = DbConnection.getConnection()){
+			var pstmt = conn.prepareStatement(tableQuery);
+			pstmt.setInt(1, employeeId);
+			var query = pstmt.executeQuery();
+			if (query.next()) {
+				emp = new Employee(
+						query.getInt("employee_id"),
+						query.getString("first_name"),
+						query.getString("last_name"),
+						query.getString("school_id"),
+						query.getString("email"),
+						query.getString("phone_number"),
+						query.getString("title")
+					);
+			}else {
+				System.out.println("Employee not found at employee ID " + employeeId);
+				return null;
+			}
+		} catch (SQLException e){
+			System.out.println("Connection Error 3: " + e.getMessage());
+			e.getStackTrace();
+		}
+		return emp;
 	}
 }
