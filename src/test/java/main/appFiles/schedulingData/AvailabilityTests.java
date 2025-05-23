@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import main.appFiles.schedulingData.Availability;
 import main.appFiles.schedulingData.TimeRange;
 import main.appFiles.schedulingData.Employee;
-import main.appFiles.databaseManagement.EmployeeDBCRUD;
-import main.appFiles.databaseManagement.AvailabilityDBCRUD;
+import main.appFiles.databaseManagement.EmployeeDAO;
+import main.appFiles.databaseManagement.AvailabilityDAO;
 import main.appFiles.tools.ClearTables;
 import main.appFiles.databaseManagement.DbConnection;
 import main.appFiles.tools.DbTableInit;
@@ -25,7 +25,7 @@ class AvailabilityTests {
         DbTableInit.TableInit();
         ClearTables.clearAllTables();
         Employee emp = new Employee("Test", "User", "T100", "test.user@example.com", "555-1000", "tester");
-        employeeId = EmployeeDBCRUD.addEmployeeDb(emp);
+        employeeId = EmployeeDAO.addEmployeeDb(emp);
         assertTrue(employeeId > 0, "Employee should be inserted successfully");
     }
 
@@ -34,7 +34,7 @@ class AvailabilityTests {
     void addGetAvailability() {
         Availability avail = new Availability("MONDAY");
         avail.addTimeRange("09:00", "12:00");
-        int availId = AvailabilityDBCRUD.addAvailabilityDb(employeeId, avail);
+        int availId = AvailabilityDAO.addAvailabilityDb(employeeId, avail);
         assertTrue(availId > 0, "Should return a positive availability_id");
         Availability reloaded = new Availability("MONDAY");
         reloaded.refreshAvailability(employeeId);
@@ -48,11 +48,11 @@ class AvailabilityTests {
     void deleteAvailability() {
         Availability avail = new Availability("TUESDAY");
         avail.addTimeRange("10:00", "11:00");
-        int availId = AvailabilityDBCRUD.addAvailabilityDb(employeeId, avail);
+        int availId = AvailabilityDAO.addAvailabilityDb(employeeId, avail);
         Availability before = new Availability("TUESDAY");
         before.refreshAvailability(employeeId);
         assertFalse(before.getTimeRanges().isEmpty(), "Should have availability before delete");
-        AvailabilityDBCRUD.delAvailability(availId);
+        AvailabilityDAO.delAvailability(availId);
         Availability after = new Availability("TUESDAY");
         after.refreshAvailability(employeeId);
         assertTrue(after.getTimeRanges().isEmpty(), "All time ranges should be gone after delete");

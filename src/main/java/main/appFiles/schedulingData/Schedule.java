@@ -1,9 +1,10 @@
 package main.appFiles.schedulingData;
 
-import main.appFiles.databaseManagement.DbConnection;
 import main.appFiles.scheduleAlgorithm.ScheduleBuilder;
 import main.appFiles.scheduleAlgorithm.Shift;
-import main.appFiles.databaseManagement.ScheduleDBCRUD;
+import main.appFiles.databaseManagement.ScheduleDb;
+
+import java.sql.SQLException;
 import java.time.*;
 import java.util.*;
 
@@ -12,30 +13,24 @@ public class Schedule {
     private LocalTime endTime;
 	private String tableName;
 	private ArrayList<Employee> employees;
-    private List<Shift> schedule;
+    private List<Shift> shifts;
 
     public Schedule(String start, String end, ArrayList<Employee> employeeList) {
         this.startTime = LocalTime.parse(start);
         this.endTime = LocalTime.parse(end);
         this.employees = new ArrayList<>();
-        this.tableName = "schedule_" + System.currentTimeMillis();
 
         for (Employee e : employeeList) {
             employees.add(e);
         }
-        createTable();
-        generateSchedule();
-    }
-    
-    private void createTable() {
-    	ScheduleDBCRUD.createScheduleTable(this);
-    }
-    
-    private void generateSchedule() {
         ScheduleBuilder.scheduleBuild(this);
-        ScheduleDBCRUD.addShifts(this);
+        try {
+			ScheduleDb.persistSchedule(this);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
     }
-
+    
 	public LocalTime getStartTime() {
 		return startTime;
 	}
@@ -65,13 +60,13 @@ public class Schedule {
 	}
 	
 	public List<Shift> getShifts(){
-		return schedule;
+		return shifts;
 	}
 	
 	public void setShifts(List<Shift> shifts) {
-		schedule = new ArrayList<Shift>();
+		shifts = new ArrayList<Shift>();
 		for (Shift s : shifts) {
-			schedule.add(s);
+			shifts.add(s);
 		}
 	}
 }

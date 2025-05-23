@@ -18,7 +18,7 @@ public class Shift {
 		this.end = end;
 	}
 
-	public int getEmployeeid() {
+	public int getEmployeeId() {
 		return employeeId;
 	}
 

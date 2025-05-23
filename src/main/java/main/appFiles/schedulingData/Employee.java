@@ -78,11 +78,11 @@ public class Employee {
         this.employeeId = employeeId;
     }
     
-    public void addAvailability(String day, String start, String end) {
+    public void addAvailability(String day, String start, String end, int employeeId) {
         if (availabilities.containsKey(day)) {
             availabilities.get(day).addTimeRange(start, end);
         } else {
-            Availability avail = new Availability(day);
+            Availability avail = new Availability(day, employeeId);
             avail.addTimeRange(start, end);
             availabilities.put(day, avail);
         }
@@ -96,58 +96,6 @@ public class Employee {
         for (Availability avail : availabilities.values()) {
             System.out.println(avail.toString());
         }
-    }
-    
-    public void employeeRefresh() {
-        String tableQuery = "SELECT employee_id, first_name, last_name, school_id, email, phone_number, title FROM employees WHERE employee_id = ?";
-        try (var conn = DbConnection.getConnection();
-             var pstmt = conn.prepareStatement(tableQuery)) {
-             pstmt.setInt(1, this.employeeId);
-             try (var query = pstmt.executeQuery()) {
-                 if (query.next()) {
-                     this.employeeId = query.getInt("employee_id");
-                     this.fName = query.getString("first_name");
-                     this.lName = query.getString("last_name");
-                     this.schoolId = query.getString("school_id");
-                     this.email = query.getString("email");
-                     this.phoneNum = query.getString("phone_number");
-                     this.title = query.getString("title");
-                 } else {
-                     System.out.println("No record found for employee ID " + this.employeeId);
-                 }
-             }
-        } catch (SQLException e) {
-             System.err.println("Error refreshing employee: " + e.getMessage());
-             e.printStackTrace();
-        }
-    }
-    
-    public static Employee employeeRefresh(int id) {
-        Employee emp = null;
-    	String tableQuery = "SELECT employee_id, first_name, last_name, school_id, email, phone_number, title FROM employees WHERE employee_id = ?";
-        try (var conn = DbConnection.getConnection();
-             var pstmt = conn.prepareStatement(tableQuery)) {
-             pstmt.setInt(1, id);
-             try (var query = pstmt.executeQuery()) {
-                 if (query.next()) {
-                	 emp = new Employee(
-                     query.getInt("employee_id"),
-                     query.getString("first_name"),
-                     query.getString("last_name"),
-                     query.getString("school_id"),
-                     query.getString("email"),
-                     query.getString("phone_number"),
-                     query.getString("title"));
-                 } else {
-                     System.out.println("No record found for employee ID " + id);
-                     return null;
-                 }
-             }
-        } catch (SQLException e) {
-             System.err.println("Error refreshing employee: " + e.getMessage());
-             e.printStackTrace();
-        }
-        return emp;
     }
     
     @Override

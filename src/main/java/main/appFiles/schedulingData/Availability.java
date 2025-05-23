@@ -10,13 +10,16 @@ public class Availability {
     private DayOfWeek day;
     private List<TimeRange> timeRanges = new ArrayList<>();
     private int availabilityId;
+    private int employeeId;
     
-    public Availability(String day) {
+    public Availability(String day, int employeeId) {
         this.day = DayOfWeek.valueOf(day);
+        this.employeeId = employeeId;
     }
     
-    public Availability(DayOfWeek day) {
+    public Availability(DayOfWeek day, int employeeId) {
         this.day = day;
+        this.employeeId = employeeId;
     }
     
     public Availability(String day, String rangesStr) {
@@ -36,6 +39,10 @@ public class Availability {
         timeRanges.add(tr);
     }
     
+    public void addTimeRange(TimeRange tr) {
+    	timeRanges.add(tr);
+    }
+    
     
     public DayOfWeek getDay() {
         return day;
@@ -45,9 +52,17 @@ public class Availability {
         return timeRanges;
     }
     
-    public void setEmployeeId(int newId) {
-    	this.availabilityId = newId;
-    }
+	public int getAvailabilityId() {
+		return availabilityId;
+	}
+
+	public void setAvailabilityId(int availabilityId) {
+		this.availabilityId = availabilityId;
+	}
+	
+	public int getEmployeeId() {
+		return employeeId;
+	}
     
     @Override
     public String toString() {
@@ -60,25 +75,5 @@ public class Availability {
             }
         }
         return sb.toString();
-    }
-    
-    public void refreshAvailability(int employeeId) {
-        String tableQuery = "SELECT start_time, end_time FROM availability WHERE employee_id = ? AND day_of_week = ?";
-        try (var conn = DbConnection.getConnection();
-             var pstmt = conn.prepareStatement(tableQuery)) {
-            pstmt.setInt(1, employeeId);
-            pstmt.setString(2, day.toString());
-            try (var query = pstmt.executeQuery()) {
-                timeRanges.clear();
-                while (query.next()) {
-                    String start = query.getString("start_time");
-                    String end = query.getString("end_time");
-                    addTimeRange(start, end);
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error refreshing availability: " + e.getMessage());
-            e.printStackTrace();
-        }
     }
 }
