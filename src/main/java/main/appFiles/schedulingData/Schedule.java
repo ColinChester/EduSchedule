@@ -15,7 +15,7 @@ public class Schedule {
 	private ArrayList<Employee> employees;
     private List<Shift> shifts;
 
-    public Schedule(String start, String end, ArrayList<Employee> employeeList) {
+    public Schedule(String start, String end, ArrayList<Employee> employeeList, DayOfWeek day) {
         this.startTime = LocalTime.parse(start);
         this.endTime = LocalTime.parse(end);
         this.employees = new ArrayList<>();
@@ -23,7 +23,7 @@ public class Schedule {
         for (Employee e : employeeList) {
             employees.add(e);
         }
-        ScheduleBuilder.scheduleBuild(this);
+        ScheduleBuilder.scheduleBuildDay(this, day);
         try {
 			ScheduleDb.persistSchedule(this);
 		} catch (SQLException e1) {
