@@ -10,6 +10,9 @@ import dao.BaseDAO;
 
 import java.sql.ResultSet;
 
+/**
+ * DAO for managing {@link Employee} entities.
+ */
 public class EmployeeDAO extends BaseDAO<Employee>{
 
 	@Override
@@ -60,9 +63,9 @@ public class EmployeeDAO extends BaseDAO<Employee>{
 		ps.setInt(7, e.getEmployeeId());
 	}
 
-	@Override
-	protected Employee toObject(ResultSet rs) throws SQLException {
-		return new Employee(
+        @Override
+        protected Employee toObject(ResultSet rs) throws SQLException {
+                return new Employee(
                 rs.getInt("employee_id"),
                 rs.getString("first_name"),
                 rs.getString("last_name"),

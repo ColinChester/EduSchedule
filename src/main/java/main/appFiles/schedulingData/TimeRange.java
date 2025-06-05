@@ -2,11 +2,17 @@ package main.appFiles.schedulingData;
 
 import java.time.LocalTime;
 
+/**
+ * Immutable representation of a start and end time.
+ */
 public class TimeRange {
 	private LocalTime start;
 	private LocalTime end;
 	
-	public TimeRange(String start, String end) {
+        /**
+         * Construct from string representations of the times.
+         */
+        public TimeRange(String start, String end) {
 	    LocalTime s = LocalTime.parse(start);
 	    LocalTime e = LocalTime.parse(end);
 	    if (s.compareTo(e) >= 0) {
@@ -16,7 +22,10 @@ public class TimeRange {
 	    this.end = e;
 	}
 
-	public TimeRange(LocalTime start, LocalTime end) {
+        /**
+         * Construct from pre-parsed {@link LocalTime} objects.
+         */
+        public TimeRange(LocalTime start, LocalTime end) {
 	    if (start.compareTo(end) >= 0) {
 	        throw new IllegalArgumentException("Start time must be before end time.");
 	    }

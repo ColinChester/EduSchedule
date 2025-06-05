@@ -18,9 +18,20 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.*;
 
+/**
+ * Builds schedules for a single day using OR-Tools to balance load and obey
+ * employee availability.
+ */
 public class ScheduleBuilder {
     static { Loader.loadNativeLibraries(); }
     
+    /**
+     * Generate a schedule for a specific day.
+     *
+     * @param s base schedule containing employees and time range
+     * @param scheduleDay day of the week to schedule
+     * @return the populated schedule instance
+     */
     public static Schedule scheduleBuildDay(Schedule s, DayOfWeek scheduleDay) {
         LocalTime startTime = s.getStartTime();
         LocalTime endTime = s.getEndTime();

@@ -4,8 +4,13 @@ import main.appFiles.databaseManagement.DbConnection;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/** Initialize required database tables if they do not exist. */
 public class DbTableInit { // https://www.sqlitetutorial.net/sqlite-java/create-table/
-	public static void TableInit() {
+
+        /**
+         * Create the employee and availability tables when absent.
+         */
+        public static void TableInit() {
 		try(Connection conn = DbConnection.getConnection()){
 			if (conn == null) {
 				System.err.print("connection error 5 (init)");

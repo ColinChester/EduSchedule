@@ -15,45 +15,48 @@ import java.util.List;
 
 import dao.BaseDAO;
 
+/**
+ * DAO handling CRUD operations for {@link Availability} records.
+ */
 public class AvailabilityDAO extends BaseDAO<Availability>{
 
-	@Override
-	protected String tableName() {
-		return "availability";
-	}
+        @Override
+        protected String tableName() {
+                return "availability";
+        }
 
-	@Override
-	protected String idName() {
-		return "availability_id";
-	}
+        @Override
+        protected String idName() {
+                return "availability_id";
+        }
 
-	@Override
-	protected String insertStatment() {
-		return "INSERT INTO availability (employee_id, day_of_week, start_time, end_time) VALUES (?, ?, ?, ?)";
-	}
+        @Override
+        protected String insertStatment() {
+                return "INSERT INTO availability (employee_id, day_of_week, start_time, end_time) VALUES (?, ?, ?, ?)";
+        }
 
-	@Override
-	protected void fillInsert(PreparedStatement ps, Availability a) throws SQLException {
-		TimeRange tr = a.getTimeRanges().get(0);
-		ps.setInt(1, a.getEmployeeId());
-		ps.setString(2, a.getDay().toString());
+        @Override
+        protected void fillInsert(PreparedStatement ps, Availability a) throws SQLException {
+                TimeRange tr = a.getTimeRanges().get(0);
+                ps.setInt(1, a.getEmployeeId());
+                ps.setString(2, a.getDay().toString());
         ps.setString(3, tr.getStart().toString());
         ps.setString(4, tr.getEnd().toString());
 	}
 
-	@Override
-	protected String editStatement() {
-		return "UPDATE availability SET"
-	            + "  employee_id = COALESCE(?, employee_id),"
-	            + "  day_of_week  = COALESCE(?, day_of_week),"
+        @Override
+        protected String editStatement() {
+                return "UPDATE availability SET"
+                    + "  employee_id = COALESCE(?, employee_id),"
+                    + "  day_of_week  = COALESCE(?, day_of_week),"
 	            + "  start_time   = COALESCE(?, start_time),"
 	            + "  end_time     = COALESCE(?, end_time)"
 	            + " WHERE availability_id = ?";
 	}
 
-	@Override
-	protected void fillEdit(PreparedStatement ps, Availability a) throws SQLException {
-		TimeRange tr = a.getTimeRanges().get(0);
+        @Override
+        protected void fillEdit(PreparedStatement ps, Availability a) throws SQLException {
+                TimeRange tr = a.getTimeRanges().get(0);
         ps.setInt(1, a.getEmployeeId());
         ps.setString(2, a.getDay().toString());
         ps.setString(3, tr.getStart().toString());
@@ -61,11 +64,11 @@ public class AvailabilityDAO extends BaseDAO<Availability>{
         ps.setInt(5, a.getAvailabilityId());
 	}
 
-	@Override
-	protected Availability toObject(ResultSet rs) throws SQLException {
-		int availabilityId = rs.getInt("availability_id");
-	    int employeeId = rs.getInt("employee_id");
-	    DayOfWeek day = DayOfWeek.valueOf(rs.getString("day_of_week"));
+        @Override
+        protected Availability toObject(ResultSet rs) throws SQLException {
+                int availabilityId = rs.getInt("availability_id");
+            int employeeId = rs.getInt("employee_id");
+            DayOfWeek day = DayOfWeek.valueOf(rs.getString("day_of_week"));
 	    LocalTime start = LocalTime.parse(rs.getString("start_time"));
 	    LocalTime end = LocalTime.parse(rs.getString("end_time"));
 	    Availability a = new Availability(day, employeeId);
@@ -74,7 +77,13 @@ public class AvailabilityDAO extends BaseDAO<Availability>{
 	    return a;
 	}
 	
-	public List<Availability> employeeAvailabilities(int employeeId) {
+        /**
+         * Fetch all availability records for a specific employee.
+         *
+         * @param employeeId identifier of the employee
+         * @return list of availability entries belonging to the employee
+         */
+        public List<Availability> employeeAvailabilities(int employeeId) {
         String sql = "SELECT * FROM " + tableName() + " WHERE employee_id = ?";
         try (Connection conn = conn();
              PreparedStatement ps = conn.prepareStatement(sql)) {

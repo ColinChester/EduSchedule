@@ -6,9 +6,18 @@ import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.sql.Connection;
 
+/**
+ * Utility for obtaining SQLite database connections bundled with the
+ * application resources.
+ */
 public class DbConnection {
 	
-	    public static Connection connect() { //Implementation reworked from https://www.sqlitetutorial.net/sqlite-java/sqlite-jdbc-driver/
+            /**
+             * Establish a connection to the packaged SQLite file.
+             *
+             * @return a JDBC connection or {@code null} on failure
+             */
+            public static Connection connect() { //Implementation reworked from https://www.sqlitetutorial.net/sqlite-java/sqlite-jdbc-driver/
 	    	Connection conn = null;
 	    	try {
 		        var url = DbConnection.class.getResource("/ScheduleData.sqlite");
@@ -29,8 +38,13 @@ public class DbConnection {
 			return conn;
 	    }
 	    
-	    public static Connection getConnection() {
-	    	return connect();
-	    }
+            /**
+             * Convenience method returning a new connection.
+             *
+             * @return connection instance created by {@link #connect()}
+             */
+            public static Connection getConnection() {
+                return connect();
+            }
 
 }

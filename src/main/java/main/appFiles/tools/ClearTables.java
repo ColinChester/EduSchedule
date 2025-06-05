@@ -4,8 +4,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import main.appFiles.databaseManagement.*;
+/** Utility functions to remove all data from schedule related tables. */
 public class ClearTables {
-	public static void clearAllTables() {
+
+        /**
+         * Delete contents of all schedule tables and reset sequences.
+         */
+        public static void clearAllTables() {
 		String clearAvailability = "DELETE From availability";
 		String clearEmployees = "DELETE FROM employees";
 		
