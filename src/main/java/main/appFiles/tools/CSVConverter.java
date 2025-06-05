@@ -8,8 +8,18 @@ import java.util.List;
 
 import main.appFiles.schedulingData.Employee;
 
+/**
+ * Helper for reading employee information from CSV files.
+ */
 public class CSVConverter {
     
+    /**
+     * Parse a CSV file into {@link Employee} objects.
+     *
+     * @param filePath path to the CSV file
+     * @return list of employees loaded from the file
+     * @throws IOException if the file cannot be read
+     */
     public List<Employee> readFile(String filePath) throws IOException {
         List<Employee> employees = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {

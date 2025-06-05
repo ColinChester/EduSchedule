@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import main.appFiles.databaseManagement.DbConnection;
 
+/**
+ * Domain model representing an employee of the organisation.
+ */
 public class Employee {
     private String fName;
     private String lName;
@@ -16,6 +19,9 @@ public class Employee {
     
     private Map<String, Availability> availabilities = new HashMap<>();
     
+    /**
+     * Construct an employee without an id.
+     */
     public Employee(String fName, String lname, String schoolId, String email, String phoneNum, String title) {
         this.fName = fName;
         this.lName = lname;
@@ -25,6 +31,9 @@ public class Employee {
         this.title = title;
     }
     
+    /**
+     * Construct an employee with an existing id.
+     */
     public Employee(int employeeId, String fName, String lname, String schoolId, String email, String phoneNum, String title) {
         this.employeeId = employeeId;
         this.fName = fName;
@@ -78,6 +87,9 @@ public class Employee {
         this.employeeId = employeeId;
     }
     
+    /**
+     * Add availability information for this employee.
+     */
     public void addAvailability(String day, String start, String end, int employeeId) {
         if (availabilities.containsKey(day)) {
             availabilities.get(day).addTimeRange(start, end);
@@ -92,6 +104,9 @@ public class Employee {
         return availabilities;
     }
     
+    /**
+     * Print all stored availability entries to standard output.
+     */
     public void printAvailabilities() {
         for (Availability avail : availabilities.values()) {
             System.out.println(avail.toString());

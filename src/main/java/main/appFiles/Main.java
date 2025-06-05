@@ -13,11 +13,15 @@ import main.appFiles.schedulingData.TimeRange;
 import main.appFiles.tools.ClearTables;
 import main.appFiles.tools.DbTableInit;
 
+/** Entry point demonstrating schedule generation. */
 public class Main {
 	private final static EmployeeDAO employeeDAO = new EmployeeDAO();
 	private final static AvailabilityDAO availabilityDAO = new AvailabilityDAO();
 	
-	public static void main(String[] args) {
+        /**
+         * Bootstraps the database, inserts demo data and prints a schedule.
+         */
+        public static void main(String[] args) {
 		DbTableInit.TableInit();
 		ClearTables.clearAllTables();
 		
@@ -48,7 +52,10 @@ public class Main {
         schedule.getShifts().forEach(System.out::println);
 
 	}
-	private static void defineAvailability(Employee e, DayOfWeek day, LocalTime start, LocalTime end, AvailabilityDAO availabilityDAO) {
+        /**
+         * Helper to persist a single availability entry for an employee.
+         */
+        private static void defineAvailability(Employee e, DayOfWeek day, LocalTime start, LocalTime end, AvailabilityDAO availabilityDAO) {
 		e.addAvailability(day.toString(), start.toString(), end.toString(), e.getEmployeeId());
 		Availability a = new Availability(day, e.getEmployeeId());
 		a.addTimeRange(new TimeRange(start, end));

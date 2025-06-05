@@ -4,8 +4,10 @@ import main.appFiles.databaseManagement.DbConnection;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 
+/** Utility methods to print database table contents for debugging. */
 public class TableReader {// Test resource, https://www.sqlitetutorial.net/sqlite-java/select/
-	public static void readEmployeeTable() {
+        /** Print contents of the employees table to stdout. */
+        public static void readEmployeeTable() {
 		String tableQuery = "SELECT employee_id, first_name, last_name, school_id, email, phone_number, title FROM employees";
 		try (var conn = DbConnection.getConnection()){
 			var stmt = conn.createStatement();
@@ -28,7 +30,8 @@ public class TableReader {// Test resource, https://www.sqlitetutorial.net/sqlit
 		}
 	}
 	
-	public static void readAvailabilityTable() {
+        /** Print contents of the availability table to stdout. */
+        public static void readAvailabilityTable() {
 		String tableQuery = "SELECT availability_id, employee_id, day_of_week, start_time, end_time FROM availability";
 		try (var conn = DbConnection.getConnection()){
 			var stmt = conn.createStatement();
@@ -48,7 +51,8 @@ public class TableReader {// Test resource, https://www.sqlitetutorial.net/sqlit
 		}
 	}
 	
-	public static void readScheduleTables() {
+        /** Print all dynamically created schedule tables to stdout. */
+        public static void readScheduleTables() {
 		String tableQuery = "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'schedule_%';";
 		try (var conn = DbConnection.getConnection()){
 			var stmt = conn.createStatement();

@@ -8,6 +8,9 @@ import java.sql.SQLException;
 import java.time.*;
 import java.util.*;
 
+/**
+ * Container for schedule information for a single day.
+ */
 public class Schedule {
     private LocalTime startTime;
     private LocalTime endTime;
@@ -15,6 +18,14 @@ public class Schedule {
 	private ArrayList<Employee> employees;
     private List<Shift> shifts;
 
+    /**
+     * Build a schedule from the provided employees and time range.
+     *
+     * @param start       day start time as HH:mm
+     * @param end         day end time as HH:mm
+     * @param employeeList employees available to schedule
+     * @param day         day of week to generate a schedule for
+     */
     public Schedule(String start, String end, ArrayList<Employee> employeeList, DayOfWeek day) {
         this.startTime = LocalTime.parse(start);
         this.endTime = LocalTime.parse(end);
@@ -63,10 +74,13 @@ public class Schedule {
 		return shifts;
 	}
 	
-	public void setShifts(List<Shift> shifts) {
-		shifts = new ArrayList<Shift>();
-		for (Shift s : shifts) {
-			shifts.add(s);
-		}
-	}
+        /**
+         * Replace current shifts with the provided list.
+         */
+        public void setShifts(List<Shift> shifts) {
+                this.shifts = new ArrayList<>();
+                for (Shift s : shifts) {
+                        this.shifts.add(s);
+                }
+        }
 }

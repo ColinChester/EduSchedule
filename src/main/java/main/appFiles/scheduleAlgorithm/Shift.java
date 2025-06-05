@@ -5,6 +5,9 @@ import java.time.LocalTime;
 import java.time.DayOfWeek;
 import java.util.*;
 
+/**
+ * Represents a single shift assignment for an employee.
+ */
 public class Shift {
 	private int employeeId;
 	private DayOfWeek day;
