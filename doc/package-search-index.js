@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"dao"},{"l":"main.appFiles.databaseManagement"},{"l":"main.appFiles.scheduleAlgorithm"},{"l":"main.appFiles.schedulingData"},{"l":"main.appFiles.tools"}];updateSearchResults();

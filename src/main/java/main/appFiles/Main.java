@@ -46,7 +46,7 @@ public class Main {
         employees.add(carol);
         employees.add(david);
         
-        Schedule schedule = new Schedule("09:00", "17:00", employees);
+        Schedule schedule = new Schedule("09:00", "17:00", employees, DayOfWeek.MONDAY);
         
         System.out.println("Generated Schedule:");
         schedule.getShifts().forEach(System.out::println);
