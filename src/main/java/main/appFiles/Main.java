@@ -30,10 +30,10 @@ public class Main {
         Employee carol = new Employee("Carol", "Lee",   "S003", "carol@company.com", "555-0003", "Tester");
         Employee david = new Employee("David", "Kim",   "S004", "david@company.com", "555-0004", "Designer");
         
-        employeeDAO.insert(alice);
-        employeeDAO.insert(bob);
-        employeeDAO.insert(carol);
-        employeeDAO.insert(david);
+        alice.setEmployeeId(employeeDAO.insert(alice));
+        bob.setEmployeeId(employeeDAO.insert(bob));
+        carol.setEmployeeId(employeeDAO.insert(carol));
+        david.setEmployeeId(employeeDAO.insert(david));
         
         defineAvailability(alice, DayOfWeek.MONDAY, LocalTime.of(9, 0), LocalTime.of(12, 0), availabilityDAO);
         defineAvailability(bob,   DayOfWeek.MONDAY, LocalTime.of(12, 0), LocalTime.of(17, 0), availabilityDAO);
